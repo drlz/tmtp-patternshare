@@ -22,7 +22,8 @@ patterndraw.settings = {
   units: 28.346, // cm as default units
   drawArea: document.getElementById("drawing"),
   height: 550,
-  width: 700
+  width: 700,
+  messages: false // enable or disable debug console notifications
 };
 
   //update or intialize settings values
@@ -39,6 +40,10 @@ patterndraw.settings.setcm = function(){
   patterndraw.settings.units = 28.346;
 };
 
+patterndraw.message = function(message){
+  if(patterndraw.settings.messages) console.log(message)
+}
+
   // draw a pattern file with a set of measurements
 patterndraw.drawpattern = function( pattern, meas ){
 
@@ -46,7 +51,7 @@ patterndraw.drawpattern = function( pattern, meas ){
   if ( meas ) {
       //process points
     pt = patterndraw.draw.calcPoints( pattern, meas );
-    console.log("patterndraw.settings.units = " + patterndraw.settings.units);
+    patterndraw.message("patterndraw.settings.units = " + patterndraw.settings.units);
     
       // generate svg elements
     var svgElms = patterndraw.svg.generate( pattern.title );
@@ -59,13 +64,13 @@ patterndraw.drawpattern = function( pattern, meas ){
     reformedsvg += patterndraw.draw.patterndraw( pattern.main ); // add the pattern
     reformedsvg += svgElms.svgend; // svg closing
 
-console.log(patterndraw.settings.drawArea)
+patterndraw.message(patterndraw.settings.drawArea)
     patterndraw.settings.drawArea.innerHTML = reformedsvg;
 
   } else {
     alert("Please enter a number in each measurement box.");
   }
-  //console.log(ptarray[1]);
+  //patterndraw.message(ptarray[1]);
 };
 
 /////////////////////////////////////////
@@ -91,8 +96,8 @@ patterndraw.draw.calcPoints = function ( pattern, meas ) {
     var ltr = i; // name of the point
     pt[ltr] = {};
 
-    console.log('evalx = ' + pattern.points[i].x);
-    console.log('evaly = ' + pattern.points[i].y);
+    patterndraw.message('evalx = ' + pattern.points[i].x);
+    patterndraw.message('evaly = ' + pattern.points[i].y);
 
     // the + unary removes leading zeroes
     var evalx = +eval( pattern.points[i].x );
@@ -107,12 +112,12 @@ patterndraw.draw.calcPoints = function ( pattern, meas ) {
     patterndraw.svg.settings.maxy = Math.max(patterndraw.svg.settings.maxy, pt[ltr].y);
     patterndraw.svg.settings.miny = Math.min(patterndraw.svg.settings.miny, pt[ltr].y);
 
-    console.log(ltr + ".x: " + pattern.points[i].x + " = " + pt[ltr].x);
-    console.log(ltr + ".y: " + pattern.points[i].y + " = " + pt[ltr].y);
-    console.log("Point "+ ltr +" maxx: " + patterndraw.svg.settings.maxx + ", maxy: " + patterndraw.svg.settings.maxy + ", minx: " + 
+    patterndraw.message(ltr + ".x: " + pattern.points[i].x + " = " + pt[ltr].x);
+    patterndraw.message(ltr + ".y: " + pattern.points[i].y + " = " + pt[ltr].y);
+    patterndraw.message("Point "+ ltr +" maxx: " + patterndraw.svg.settings.maxx + ", maxy: " + patterndraw.svg.settings.maxy + ", minx: " + 
       patterndraw.svg.settings.minx + ", miny: " + patterndraw.svg.settings.miny);
   }
-  //console.log(pt);
+  //patterndraw.message(pt);
   return pt;
 };
 
@@ -122,16 +127,16 @@ patterndraw.draw.getMeas = function( measurements ) {
     meas = {},
     pmd = measurements;
 
-  console.log("getMeas");
+  patterndraw.message("getMeas");
 
   pmd.map( function(item) {
     var measnum = $("#"+item).val(); //<------------ jquery
     if ( measnum !== "" && isNaN(measnum) === false ) {
       meas[item] = measnum;
-      console.log("meas."+item+": " + measnum);
+      patterndraw.message("meas."+item+": " + measnum);
     } else { measValid = false; }
   });
-  console.log("measValid is " + measValid);
+  patterndraw.message("measValid is " + measValid);
 
   return measValid ? meas : false;
 };
@@ -176,17 +181,17 @@ patterndraw.draw.grid = function(){
 
   //return svg string for the construction lines
 patterndraw.draw.constopt = function( construction ){
-  console.log('got to here!');
+  patterndraw.message('got to here!');
 
   var svgconststr = "<g>", i, j;
   for ( i in construction ) {
-    console.log('i = ' + i);
+    patterndraw.message('i = ' + i);
     svgconststr += "<";
     svgconststr += construction[i].type + " " + "id=\"" + construction[i].id + "\" ";
     for (j in construction[i].drawattr){
       var evaled = eval( construction[i].drawattr[j] );
       evaled *= patterndraw.settings.units;
-      console.log("og: " + construction[i].drawattr[j] + "ev: " + evaled);
+      patterndraw.message("og: " + construction[i].drawattr[j] + "ev: " + evaled);
       svgconststr += j + "=\"" + evaled + "\" ";
     }
     if ( construction[i].type == "path" ){
@@ -194,12 +199,12 @@ patterndraw.draw.constopt = function( construction ){
       for (j in construction[i].d){
         svgconststr += construction[i].d[j][0];
         for (var k=1; k < construction[i].d[j].length; k++){
-          //console.log(window.patternData.pattern.construction[i].d[j][k][0]);
+          //patterndraw.message(window.patternData.pattern.construction[i].d[j][k][0]);
           var eval0 = eval( construction[i].d[j][k][0] );
           var eval1 = eval( construction[i].d[j][k][1] );
           eval0 *= patterndraw.settings.units;
           eval1 *= patterndraw.settings.units;
-          //console.log("j[0]: " + window.patternData.pattern.construction[i].d[j][0]);
+          //patterndraw.message("j[0]: " + window.patternData.pattern.construction[i].d[j][0]);
           if ( construction[i].d[j][0] !== "m" ) { eval0; eval1; }
 
           svgconststr += " " + eval0 + "," + eval1 + " ";
@@ -233,7 +238,7 @@ patterndraw.draw.patterndraw = function( pattern ){
     for ( j in pattern[i].drawattr ){
       var evaled = eval( pattern[i].drawattr[j] );
       evaled *= patterndraw.settings.units;
-      //console.log("og: " + window.patternData.pattern.main[i].drawattr[j] + "ev: " + evaled);
+      //patterndraw.message("og: " + window.patternData.pattern.main[i].drawattr[j] + "ev: " + evaled);
       svgobjstring += j + "=\"" + evaled + "\" ";
     }
 
@@ -242,12 +247,12 @@ patterndraw.draw.patterndraw = function( pattern ){
       for (j in pattern[i].d){
         svgobjstring += pattern[i].d[j][0];
         for (var k=1; k< pattern[i].d[j].length; k++){
-          //console.log(window.patternData.pattern.main[i].d[j][k][0]);
+          //patterndraw.message(window.patternData.pattern.main[i].d[j][k][0]);
           var eval0 = eval( pattern[i].d[j][k][0]);
           var eval1 = eval( pattern[i].d[j][k][1]);
           eval0 *= patterndraw.settings.units;
           eval1 *= patterndraw.settings.units;
-          //console.log("j[0]: " + window.patternData.pattern.main[i].d[j][0]);
+          //patterndraw.message("j[0]: " + window.patternData.pattern.main[i].d[j][0]);
           if ( pattern[i].d[j][0] !== "m") { eval0; eval1; }
 
           svgobjstring += " " + eval0 + "," + eval1 + " ";
@@ -288,7 +293,7 @@ patterndraw.draw.constptopt = function( points ){
     constptstr += "x=\"" + x + "\" y=\"" + y + "\"";
     constptstr += " >" + ltr + ": (" + points[ltr].x.toFixed(3) + ", " + points[ltr].y.toFixed(3) + ")";
     constptstr += "</text>";
-    //console.log(ltr + ": (" + x + ", " + y + ")");
+    //patterndraw.message(ltr + ": (" + x + ", " + y + ")");
   }
   constptstr += "</g>";
   return constptstr;
@@ -310,7 +315,7 @@ patterndraw.math.angleBetween = function(pt1, pt2){
     var dy = pt2.y - pt1.y;
     var dx = pt2.x - pt1.x;
     var ang = Math.atan2(dy, dx);
-    console.log("angleBetween (" + pt1.x + ", " + pt1.y + ") & (" + pt2.x + ", " + pt2.y + ") = " + ang);
+    patterndraw.message("angleBetween (" + pt1.x + ", " + pt1.y + ") & (" + pt2.x + ", " + pt2.y + ") = " + ang);
     return ang;
 };
 
@@ -324,7 +329,7 @@ patterndraw.math.angleBetween3pts = function(a, b, c){
     var dot = (ab.x*cb.x + ab.y*cb.y);
     var cross = (ab.x*cb.y - ab.y*cb.x);
     var alpha = Math.atan2(cross,dot);
-    console.log("alpha: " + alpha);
+    patterndraw.message("alpha: " + alpha);
     return(alpha);
 };
 
@@ -332,7 +337,7 @@ patterndraw.math.dist = function(pt1, pt2){
     var dy = pt2.y - pt1.y;
     var dx = pt2.x - pt1.x;
     var d = Math.sqrt(dy*dy + dx*dx);
-    console.log("distance between (" + pt1.x + ", " + pt1.y + ") & (" + pt2.x + ", " + pt2.y + ") = " + d);
+    patterndraw.message("distance between (" + pt1.x + ", " + pt1.y + ") & (" + pt2.x + ", " + pt2.y + ") = " + d);
     return d;
 };
 
@@ -344,7 +349,7 @@ patterndraw.math.rotate = function(p, o, theta, ltr){
     var p0 = {};
     p0.x = Math.cos(theta) * (p.x-o.x) - Math.sin(theta) * (p.y-o.y) + o.x;
     p0.y = Math.sin(theta) * (p.x-o.x) + Math.cos(theta) * (p.y-o.y) + o.y;
-    console.log("ltr: " + ltr);
+    patterndraw.message("ltr: " + ltr);
     if (ltr == 'x'){ return p0.x; }
     if (ltr == 'y'){ return p0.y; }
 };
@@ -381,40 +386,40 @@ patterndraw.math.bezierLength = function(start, c1, c2, end){
 
 patterndraw.math.ccIntersect = function(P0, r0, P1, r1, ltr){
     var d = patterndraw.math.dist(P0, P1);
-    console.log("d: "+d);
+    patterndraw.message("d: "+d);
     r1 = parseFloat(r1);
     r0 = parseFloat(r0);
-    console.log("r1: " + r1);
+    patterndraw.message("r1: " + r1);
     var r0r1 = r0+r1;
-    console.log("r0+r1= " + r0r1);
+    patterndraw.message("r0+r1= " + r0r1);
     if (r0r1<d){
-        console.log("No Intersection between " + P0 + " and " + P1 + " with radii " + r0 + " and " + r1);
+        patterndraw.message("No Intersection between " + P0 + " and " + P1 + " with radii " + r0 + " and " + r1);
         return 0;
     }
     if (d<Math.abs(r0-r1)){
-        console.log("One circle is inside another.");
+        patterndraw.message("One circle is inside another.");
         return 0;
     }
     var a = (r0*r0 - r1*r1 + d*d)/(2*d);
-    console.log("a: "+a);
+    patterndraw.message("a: "+a);
     var b = d-a;
-    console.log("b: "+b);
+    patterndraw.message("b: "+b);
     var h = Math.sqrt(r0*r0 - a*a);
 
     var P2 = {};
     P2.x = P0.x + a*(P1.x-P0.x)/d;
     P2.y = P0.y + a*(P1.y-P0.y)/d;
-    console.log("P2: (" + P2.x + ", " + P2.y + ")");
+    patterndraw.message("P2: (" + P2.x + ", " + P2.y + ")");
 
     var P31 = {};
     P31.x = P2.x + h*(P1.y-P0.y)/d;
     P31.y = P2.y - h*(P1.x-P0.x)/d;
-    console.log("P31: (" + P31.x + ", " + P31.y + ")");
+    patterndraw.message("P31: (" + P31.x + ", " + P31.y + ")");
 
     var P32 = {};
     P32.x = P2.x - h*(P1.y-P0.y)/d;
     P32.y = P2.y + h*(P1.x-P0.x)/d;
-    console.log("P32: (" + P32.x + ", " + P32.y + ")");
+    patterndraw.message("P32: (" + P32.x + ", " + P32.y + ")");
 
     if (ltr == 'x'){ return P32.x; }
     if (ltr == 'y'){ return P32.y; }
@@ -424,7 +429,7 @@ patterndraw.math.pointOnLineAtLength = function(p1, p2, length, ltr) {
     //Accepts points p1 and p2, length, and letter 'x' or 'y'
     //Returns x or y of point on the line at length measured from p1 towards p2
     //If length is negative, returns point found at length measured from p1 in opposite direction from p2
-    console.log('length = ', length);
+    patterndraw.message('length = ', length);
     var lineangle = angleBetween(p1, p2);
     var x = (length * Math.cos(lineangle)) + p1.x;
     var y  = (length * Math.sin(lineangle)) + p1.y;
@@ -437,9 +442,9 @@ patterndraw.math.pointOnLineAtLength = function(p1, p2, length, ltr) {
 
 patterndraw.math.midPoint = function(p1, p2, ltr) {
     //Accepts p1 & p2. Returns x or y of point at midpoint between p1 & p2
-    console.log("midPoint.x => p1.x=" + p1.x + " + p2.x=" + p2.x + " = " + (p1.x + p2.x) / 2.0);
-    console.log("midPoint.y => p1.y=" + p1.y + " + p2.y=" + p2.y + " = " + (p1.y + p2.y) / 2.0);
-    console.log((p1.y + p2.y) / 2.0);
+    patterndraw.message("midPoint.x => p1.x=" + p1.x + " + p2.x=" + p2.x + " = " + (p1.x + p2.x) / 2.0);
+    patterndraw.message("midPoint.y => p1.y=" + p1.y + " + p2.y=" + p2.y + " = " + (p1.y + p2.y) / 2.0);
+    patterndraw.message((p1.y + p2.y) / 2.0);
     if (ltr == 'x'){
       if (p1.x == p2.x) {
         x = p1.x;
@@ -486,7 +491,7 @@ patterndraw.svg.settings = {
 };
 
 patterndraw.svg.generate = function(title) {
-  console.log("A maxx: " + patterndraw.svg.settings.maxx + ", maxy: " + patterndraw.svg.settings.maxy +
+  patterndraw.message("A maxx: " + patterndraw.svg.settings.maxx + ", maxy: " + patterndraw.svg.settings.maxy +
     ", minx: " + patterndraw.svg.settings.minx + ", miny: " + patterndraw.svg.settings.miny);
   patterndraw.svg.settings.maxx *= patterndraw.settings.units;
   patterndraw.svg.settings.maxy *= patterndraw.settings.units;
@@ -496,7 +501,7 @@ patterndraw.svg.generate = function(title) {
   patterndraw.svg.settings.miny -= 20;
   patterndraw.svg.settings.maxx += 20;
   patterndraw.svg.settings.maxy += 20;
-  console.log("B maxx: " + patterndraw.svg.settings.maxx + ", maxy: " + patterndraw.svg.settings.maxy +
+  patterndraw.message("B maxx: " + patterndraw.svg.settings.maxx + ", maxy: " + patterndraw.svg.settings.maxy +
     ", minx: " + patterndraw.svg.settings.minx + ", miny: " + patterndraw.svg.settings.miny);
 
   patterndraw.svg.settings.svgw = patterndraw.svg.settings.maxx - patterndraw.svg.settings.minx;
@@ -536,10 +541,10 @@ patterndraw.svg.savesvg = function() {
     if((~ua.indexOf('Chrome') || ~ua.indexOf('MSIE'))) {
         //showSourceEditor(0,true);
         //return;
-        console.log("chrome or ie");
+        patterndraw.message("chrome or ie");
     }
     var svg64 = patterndraw.svg.Base64(svgsavestring);
-    console.log(svg64);
+    patterndraw.message(svg64);
     var win = window.open("data:image/svg+xml;base64," + svg64);
 };
 
