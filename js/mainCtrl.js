@@ -16,7 +16,9 @@ patshare  = angular.module('patternshare', ['LocalStorageModule'])
   });
 
 function patternCtl ($scope, $http, localStorageService, $location, patterns, settings) { //controller!
+    //check the imports are resolved ok, otherwise error
   if(patterns == "error" || settings == "error") $location.path('/error');
+    //save model values
   $scope.patterns = patterns;
   $scope.settings = settings;
   $scope.ui = {
@@ -32,7 +34,7 @@ function patternCtl ($scope, $http, localStorageService, $location, patterns, se
     //load pattern when the selected pattern (actPattern.file) change
   $scope.$watch('ui.actPattern.file', function(){ 
     if(!$scope.ui.actPattern) return; //if null, exit
-    $http.jsonp('./data/patterns/' + $scope.ui.actPattern.file + '?prefix=JSON_CALLBACK')
+    $http.get('./data/patterns/' + $scope.ui.actPattern.file)
       .success(function(data) {
           //save settings to localstorage for further use
         $scope.ui.actPattern.pattern = data.pattern;
@@ -63,7 +65,7 @@ function patternCtl ($scope, $http, localStorageService, $location, patterns, se
 
 }
 
-  //requests for the pattern page
+  //requests before the pattern controler is loaded
 patternCtl.resolve = {
   settings: function($q, $http, localStorageService) {
     var deferred = $q.defer();
@@ -71,7 +73,7 @@ patternCtl.resolve = {
     if(settings){
       deferred.resolve(settings); //return the settings from localstorage
     } else {
-      $http.jsonp('./data/settingsp.json?prefix=JSON_CALLBACK')
+      $http.get('./data/settings.json')
         .success(function(data) {
             //save settings to localstorage for further use
           localStorageService.add('settings', JSON.stringify(data)); //update localstorage
@@ -90,7 +92,7 @@ patternCtl.resolve = {
     if(patterns){
       deferred.resolve(patterns); //return the settings from localstorage
     } else {
-      $http.jsonp('./data/patterns/pattern_listp.json?prefix=JSON_CALLBACK')
+      $http.get('./data/patterns/pattern_list.json')
         .success(function(data) {
           console.log(data);
             //save patterns to localstorage for further use
