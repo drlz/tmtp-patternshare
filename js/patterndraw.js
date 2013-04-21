@@ -20,7 +20,7 @@ patterndraw.settings = {
   constptopt: false, // show construction points?
   gridopt: false, // show grid?
   units: 28.346, // cm as default units
-  drawArea: document.getElementById("drawarea"),
+  drawArea: document.getElementById("drawing"),
   height: 550,
   width: 700
 };
@@ -40,11 +40,9 @@ patterndraw.settings.setcm = function(){
 };
 
   // draw a pattern file with a set of measurements
-patterndraw.drawpattern = function( pattern, measurements ){
+patterndraw.drawpattern = function( pattern, meas ){
 
     //process measurements
-  var meas = patterndraw.draw.getMeas( measurements );
-
   if ( meas ) {
       //process points
     pt = patterndraw.draw.calcPoints( pattern, meas );
@@ -61,6 +59,7 @@ patterndraw.drawpattern = function( pattern, measurements ){
     reformedsvg += patterndraw.draw.patterndraw( pattern.main ); // add the pattern
     reformedsvg += svgElms.svgend; // svg closing
 
+console.log(patterndraw.settings.drawArea)
     patterndraw.settings.drawArea.innerHTML = reformedsvg;
 
   } else {
@@ -261,7 +260,7 @@ patterndraw.draw.patterndraw = function( pattern ){
       svgobjstring += j + "=\"" + pattern[i].appearanceattr[j] + "\" ";
     }
 
-    if (window.patternData.pattern.main[i].type == "text"){
+    if (pattern[i].type == "text"){
       svgobjstring += ">" + pattern[i].content + "</text>";
     }
     else {

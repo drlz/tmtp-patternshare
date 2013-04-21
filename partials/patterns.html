@@ -3,8 +3,11 @@
 <select ng-model="ui.actPattern.file" ng-options="pattern for pattern in patterns"></select>
 <div class="pattern" ng-show="ui.actPattern">
   <h2>{{ ui.actPattern.pattern.title }}</h2>
-  <div class="form-elm" ng-repeat="measurement in ui.actPattern.pattern.measurements">
-    {{ measurement }} <br><input type="text" ng-model="ui.actPattern.pattern.defaults[$index]" >{{ settings.units }}
+  <div class="form-elm" ng-repeat="(measKey, measVal) in ui.defaults">
+    {{ measKey }} 
+    <!--<span ng-click="ui.defaults[measKey]--">-</span>-->
+    <br><input type="text" ng-model="ui.defaults[measKey]" value="{{ ui.defaults[measKey] }}">{{ settings.units }}
+   <!-- <span ng-click="ui.defaults[measKey]++">+</span>-->
   </div>
 </div>
 <h2 ng-click="ui.settingsEdit = !ui.settingsEdit">Toggle Settings:</h2>
@@ -12,4 +15,5 @@
   <select ng-model="settings.units" ng-options="unit as text for (unit, text) in app.units"></select><br>
   <input type="checkbox" ng-model="settings.showGrid">Show Grid <br>
   <input type="checkbox" ng-model="settings.showConstLines">Show construction lines <br>
+  <input type="checkbox" ng-model="settings.showConstPoints">Show construction points <br>
 </div>

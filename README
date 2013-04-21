@@ -1,5 +1,4 @@
-This fork attempts to implement BackBone into the existing code, and also adds some functionality for measurement input and storage of data.
-The test is hosted here: http://www.westpaper.com/apps/tmtp
+This fork attempts to implement Angularjs into the existing code, and also adds some functionality for measurement input and storage of data.
 
 ********
 
@@ -7,4 +6,3 @@ These files are for the development of a web application to edit pattern files, 
 
 Tau Meta Tau Physica http://www.taumeta.org/"
 The Pattern Share Project http://thepatternshare.com/"
-
