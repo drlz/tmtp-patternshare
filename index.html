@@ -3,12 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <title>Pattern Share Angular</title>
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <!--<link rel="stylesheet" href="css/jquery-ui-1.10.2.custom.css">-->
+  <link rel="stylesheet" href="css/style.css">
+
 </head>
-<body ng-app="patternshare" >
+<body ng-app="patternshare">
     
-  <div ng-view></div>
-<div id="drawing"></div>
-  
+  <div ng-view style="float:left" id="patshare-app"></div>
+  <div id="drawing" style="float:right"></div>
+
+    <!-- jquery -->
+  <!--<script type="text/javascript" src="js/libs/jquery-1.9.1.min.js" language="JavaScript"></script>-->
+  <!--<script type="text/javascript" src="js/libs/jquery-ui-1.10.2.custom.js" language="JavaScript"></script>-->
+    <!-- angular -->
   <script type="text/javascript" src="js/libs/angular.min.js" language="JavaScript"></script>
   <script type="text/javascript" src="js/libs/localStorageModule.js"></script>
   <script type="text/javascript" src="js/patterndraw.js"></script>

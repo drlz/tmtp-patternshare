@@ -4,10 +4,9 @@
 <div class="pattern" ng-show="ui.actPattern">
   <h2>{{ ui.actPattern.pattern.title }}</h2>
   <div class="form-elm" ng-repeat="(measKey, measVal) in ui.defaults">
-    {{ measKey }} 
-    <!--<span ng-click="ui.defaults[measKey]--">-</span>-->
-    <br><input type="text" ng-model="ui.defaults[measKey]" value="{{ ui.defaults[measKey] }}">{{ settings.units }}
-   <!-- <span ng-click="ui.defaults[measKey]++">+</span>-->
+   <!-- <p>{{ measKey }}: {{ ui.defaults[measKey] | number:2 }} {{ settings.units }}</p>-->
+    {{ measKey }}: <br><input type="number" value ng-model="ui.defaults[measKey]">{{ settings.units }}
+    <!--<div class="slide" slider></div>-->
   </div>
 </div>
 <h2 ng-click="ui.settingsEdit = !ui.settingsEdit">Toggle Settings:</h2>

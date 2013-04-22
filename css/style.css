@@ -81,3 +81,6 @@ select { padding: 3px; border: none; min-width: 100px }
 #units { border: 2px solid #fff; -moz-border-radius: 10px 25px / 25px 10px; border-radius: 10px 25px / 25px 10px }
 #options { border: 2px solid #fff; margin-top: 15px; -moz-border-radius: 10px 25px / 25px 10px; border-radius: 10px 25px / 25px 10px }
 #savebuttondiv { text-align: center }
+
+.ui-slider { height: 20px; width: 200px; }
+.ui-slider-horizontal .ui-slider-handle { background: red; background-color: red; }

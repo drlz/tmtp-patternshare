@@ -1,6 +1,6 @@
 'use strinct';
 
-  //angular.element(document.getElementById('clippee-app')).scope()
+  //angular.element(document.getElementById('patshare-app')).scope()
 patshare  = angular.module('patternshare', ['LocalStorageModule'])
   /* advance browser interaction
   .config(function($locationProvider, $routeProvider) { 
@@ -13,6 +13,22 @@ patshare  = angular.module('patternshare', ['LocalStorageModule'])
       .when('/patterns', {templateUrl: 'partials/patterns.html', controller: 'patternCtl', resolve: patternCtl.resolve})
       .when('/error', {templateUrl: 'partials/error.html', controller: 'error'})
       .otherwise({redirectTo: '/main'});
+  })
+    //directive for jquery ui sliders creation
+  .directive('slider', function() {
+    return {
+      link:function(scope,elm,attrs){
+        var initials = scope.$parent.ui.slideDefs[scope.measKey];
+          console.log(initials);
+        max = initials.max;
+        min = initials.min;
+        ini = initials.init.toFixed(2);
+        elm.slider({ min: min, max: max, value: initials.init, slide: function( event, ui ){
+          scope.$parent.ui.defaults[scope.measKey] = ui.value;
+          scope.$parent.$apply();
+        }});
+      }
+    };
   });
 
 function patternCtl ($scope, $http, localStorageService, $location, patterns, settings) { //controller!
@@ -39,7 +55,8 @@ function patternCtl ($scope, $http, localStorageService, $location, patterns, se
           //save settings to localstorage for further use
         $scope.ui.actPattern.pattern = data.pattern;
         $scope.generateMeasuments(data.pattern);
-        $scope.draw();
+        $scope.generateSlideDefs(data.pattern);
+        $scope.drawSVG();
       })
       .error(function(){
         console.log('error loading pattern' + $scope.ui.actPattern.file);
@@ -50,12 +67,12 @@ function patternCtl ($scope, $http, localStorageService, $location, patterns, se
     //keep localstorage settings updated
   $scope.$watch('settings', function(){
     localStorageService.add('settings', JSON.stringify($scope.settings)); //update localstorage
-    $scope.draw();
+    $scope.drawSVG();
   }, true);
 
     //update drawing when changing measurements
   $scope.$watch('ui.defaults', function(){
-    $scope.draw();
+    $scope.drawSVG();
   }, true);
 
     //translate values to current units when we change the units value
@@ -71,6 +88,7 @@ function patternCtl ($scope, $http, localStorageService, $location, patterns, se
     localStorageService.add('settings', JSON.stringify($scope.settings)); //update localstorage
   });
 
+  /* __-_ helper functions _-________________*/
     // process current pattern defaults and generate the measurements object
   $scope.generateMeasuments = function(pattern){
     $scope.ui.defaults = {};
@@ -79,8 +97,19 @@ function patternCtl ($scope, $http, localStorageService, $location, patterns, se
     for (i = 0; i< pattern.defaults.length; i++){
       $scope.ui.defaults[pattern.measurements[i]] = transf * pattern.defaults[i];
     }
+  };
+  $scope.generateSlideDefs = function(pattern){
+    $scope.ui.slideDefs = {};
+    var initial;
+    for (i = 0; i< pattern.defaults.length; i++){
+      initial = $scope.ui.defaults[pattern.measurements[i]];
+      $scope.ui.slideDefs[pattern.measurements[i]] = {
+        max: (1.5 * initial).toFixed(0),
+        min: (0.5 * initial).toFixed(0),
+        init: initial
+      };
+    }
   }
-
     // transform settings into valid patterndraw settings and update them
   $scope.processSettings = function(){
     var settings = {
@@ -92,11 +121,11 @@ function patternCtl ($scope, $http, localStorageService, $location, patterns, se
     patterndraw.init(settings);
   };
 
-  $scope.draw = function(){
+  $scope.drawSVG = function(){
     if(!$scope.ui.actPattern) return;
     $scope.processSettings();
     patterndraw.drawpattern($scope.ui.actPattern.pattern, $scope.ui.defaults);
-  }
+  };
 }
 
   //requests before the pattern controler is loaded
@@ -128,7 +157,6 @@ patternCtl.resolve = {
     } else {
       $http.get('./data/patterns/pattern_list.json')
         .success(function(data) {
-          console.log(data);
             //save patterns to localstorage for further use
           localStorageService.add('patterns', JSON.stringify(data)); //update localstorage
           deferred.resolve(data); //return the settings from defaults
