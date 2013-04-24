@@ -1,4 +1,9 @@
-body { padding-top: 60px; overflow-y: scroll;}
+body { padding-top: 60px; overflow-y: scroll; background: url(../images/rebodycolor.jpg) no-repeat top right}
+#drawing { background: white; background: rgba(255,255,255,0.5); border: 1px solid #ccc;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075),0 0 8px rgba(82,168,236,0.6);
+  -moz-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075),0 0 8px rgba(82,168,236,0.6);
+  box-shadow: inset 0 1px 1px rgba(0,0,0,0.075),0 0 8px rgba(82,168,236,0.6);
+  -webkit-border-radius: 5px; border-radius: 5px; }
 
 .draw-wrapper { min-height: 700px;}
 

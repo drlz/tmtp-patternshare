@@ -60,6 +60,7 @@ patterndraw.drawpattern = function( pattern, meas ){
   if ( !meas ) { alert("Please enter a number in each measurement box."); return; }
     //process points
   pt = patterndraw.draw.calcPoints( pattern, meas );
+
   patterndraw.message("patterndraw.settings.units = " + patterndraw.settings.units);
 
     // generate svg elements
@@ -79,7 +80,11 @@ patterndraw.drawpattern = function( pattern, meas ){
 
     //center element
   var gridBox = grid.getBBox();
-  patterndraw.rph.drawing.setViewBox(-20, -20, gridBox.width, gridBox.height, false );
+
+  patterndraw.rph.drawing.setViewBox(-20, -20, 
+    patterndraw.svg.settings.maxx - patterndraw.svg.settings.minx, 
+    patterndraw.svg.settings.maxy - patterndraw.svg.settings.miny, 
+    true );
 
     //return object
   var drawing = {
@@ -145,7 +150,7 @@ patterndraw.draw.calcPoints = function ( pattern, meas ) {
   return pt;
 };
 
-  //process pattern mesurements return measurements object or false if error
+  //process pattern mesurements return measurements object or false if error NOT USED
 patterndraw.draw.getMeas = function( measurements ) {
   var measValid = true,
     meas = {},
